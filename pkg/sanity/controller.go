@@ -38,7 +38,7 @@ const (
 	// value.
 	DefTestExpandIncrement int64 = 1 * 1024 * 1024 * 1024
 
-	MaxNameLength int = 128
+	MaxNameLength int = 48
 )
 
 func TestVolumeSize(sc *TestContext) int64 {
@@ -389,7 +389,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 		})
 
 		It("should fail when no volume capabilities are provided", func() {
-			name := UniqueString("sanity-controller-create-no-volume-capabilities")
+			name := UniqueString("sanity-no-capabilities")
 			_, err := r.CreateVolume(
 				context.Background(),
 				&csi.CreateVolumeRequest{
@@ -409,7 +409,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 		It("should return appropriate values SingleNodeWriter NoCapacity", func() {
 
 			By("creating a volume")
-			name := UniqueString("sanity-controller-create-single-no-capacity")
+			name := UniqueString("sanity-no-capacity")
 
 			r.MustCreateVolume(
 				context.Background(),
@@ -430,7 +430,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 		It("should return appropriate values SingleNodeWriter WithCapacity 1Gi", func() {
 
 			By("creating a volume")
-			name := UniqueString("sanity-controller-create-single-with-capacity")
+			name := UniqueString("sanity-with-capacity")
 
 			vol, err := r.CreateVolume(
 				context.Background(),
@@ -460,7 +460,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 		It("should not fail when requesting to create a volume with already existing name and same capacity", func() {
 
 			By("creating a volume")
-			name := UniqueString("sanity-controller-create-twice")
+			name := UniqueString("sanity-create-twice")
 			size := TestVolumeSize(sc)
 
 			vol1 := r.MustCreateVolume(
@@ -501,7 +501,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 		It("should fail when requesting to create a volume with already existing name and different capacity", func() {
 
 			By("creating a volume")
-			name := UniqueString("sanity-controller-create-twice-different")
+			name := UniqueString("sanity-different")
 			size1 := TestVolumeSize(sc)
 
 			r.MustCreateVolume(
@@ -543,7 +543,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 		})
 
 		It("should not fail when creating volume with maximum-length name", func() {
-			name := UniqueStringWithLength("sanity-controller-create-maxlen", MaxNameLength)
+			name := UniqueStringWithLength("sanity-maxlen", MaxNameLength)
 			By("creating a volume")
 			size := TestVolumeSize(sc)
 
@@ -574,7 +574,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 			snap, _ := r.MustCreateSnapshotFromVolumeRequest(context.Background(), vol1Req, UniqueString("sanity-controller-snap-from-vol"))
 
 			By("creating a volume from source snapshot")
-			vol2Name := UniqueString("sanity-controller-vol-from-snap")
+			vol2Name := UniqueString("sanity-vol-from-snap")
 			vol2Req := MakeCreateVolumeReq(sc, vol2Name)
 			vol2Req.VolumeContentSource = &csi.VolumeContentSource{
 				Type: &csi.VolumeContentSource_Snapshot{
@@ -694,7 +694,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 
 			// Create Volume First
 			By("creating a volume")
-			name := UniqueString("sanity-controller-create-appropriate")
+			name := UniqueString("sanity-appropriate")
 
 			vol := r.MustCreateVolume(
 				context.Background(),
@@ -958,7 +958,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 
 			// Create Volume First
 			By("creating a single node writer volume")
-			name := UniqueString("sanity-controller-wrong-node")
+			name := UniqueString("sanity-wrong-node")
 
 			vol := r.MustCreateVolume(
 				context.Background(),
@@ -1000,7 +1000,7 @@ var _ = DescribeSanity("Controller Service [Controller Server]", func(sc *TestCo
 
 			// Create Volume First
 			By("creating a single node writer volume")
-			name := UniqueString("sanity-controller-published-incompatible")
+			name := UniqueString("sanity-published-incompatible")
 
 			vol := r.MustCreateVolume(
 				context.Background(),
@@ -1485,10 +1485,10 @@ var _ = DescribeSanity("CreateSnapshot [Controller Server]", func(sc *TestContex
 	It("should succeed when creating snapshot with maximum-length name", func() {
 
 		By("creating a volume")
-		volReq := MakeCreateVolumeReq(sc, UniqueString("CreateSnapshot-volume-maxlen-name"))
+		volReq := MakeCreateVolumeReq(sc, UniqueString("CreateSnapshot-maxlen"))
 		volume := r.MustCreateVolume(context.Background(), volReq)
 
-		name := UniqueStringWithLength("CreateSnapshot-snapshot-maxlen", MaxNameLength)
+		name := UniqueStringWithLength("CreateSnapshot-maxlen", MaxNameLength)
 
 		By("creating a snapshot")
 		snapReq1 := MakeCreateSnapshotReq(sc, name, volume.GetVolume().GetVolumeId())
